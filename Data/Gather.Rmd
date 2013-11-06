@@ -1,0 +1,21 @@
+Gather hurricane data
+=====
+Data on hurricanes has been taken from the National Oceanic and Atmospheric Association, a branch of the US government.
+
+This code chunk will fetch the data and write it to csv.
+```{r}
+library(RCurl)
+URL = "ftp://eclipse.ncdc.noaa.gov/pub/ibtracs/v03r04/wmo/csv/basin/Basin.NA.ibtracs_wmo.v03r04.csv"
+
+df = getURL(URL)
+
+filename = "Hurricanes.csv"
+
+setwd("~/GitHub/Hurricane/Data/")
+
+write.csv(df, filename)
+
+rm(URL, filename, df)
+
+setwd("~/GitHub/Hurricane/")
+```

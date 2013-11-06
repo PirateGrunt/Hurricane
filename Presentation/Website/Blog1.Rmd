@@ -1,0 +1,4 @@
+Will a hurricane ruin my vacation?
+========================================================
+On vacation with my family this week and that means I have a few minutes now and again to read. One of the books I brought along is Christopher Gandrud's excellent "Reproducible Research with R and RStudio".
+
