@@ -1,0 +1,58 @@
+Hurricanes by year
+=====
+
+First, read in the data for number of hurricanes by year and then fit a poisson. 
+```{r}
+setwd("~/GitHub/Hurricane/Data")
+
+df = read.csv("HurricaneByYear.csv")
+
+fitPoissonAll = glm(Num ~ 1, family = poisson, data = df)
+summary(fitPoissonAll)
+
+lambda = exp(fitPoissonAll$coefficients[1])
+```
+
+We'll note that the estimated lambda is equal to the sample mean.
+```{r}
+mean(df$Num)
+lambda
+```
+
+Now, we'll plot the number of hurricanes by year along with a line for the poisson parameter
+```{r}
+plot(df$Year, df$Num, pch=19)
+abline(lambda, 0)
+```
+
+Hmm, looks like the more recent years have more points above the fit line. Let's have a look. We'll color the points so that observations above the mean are red and observations below the mean are blue.
+```{r}
+ltAvg = ifelse(df$Num < lambda, "blue", "red")
+summary(ltAvg)
+table(ltAvg)
+plot(df$Year, df$Num, pch=19, col = ltAvg)
+abline(lambda, 0)
+```
+Yep, there definitely appear to be more hurricanes in recent years. Let's add a parameter for the decade to see if it improves the fit.
+```{r}
+df$Decade = trunc(df$Year / 10)
+df$Decade = df$Decade - min(df$Decade)
+
+summary(df$Decade)
+
+fitPoissonByDecade = glm(Num ~ 1 + Decade, family = poisson, data = df)
+summary(fitPoissonByDecade)
+```
+The null deviance decreases far more than would be expected if the decade had no predictive power. We'll plot the prediction against the observations. A step function will make the most sense visually.
+```{r}
+df$DecadePredict = exp(predict(fitPoissonByDecade))
+
+plot(df$Year, df$Num, pch = 19)
+lines(df$Year, df$DecadePredict, type = "s")
+
+ltAvg = ifelse(df$Num < df$DecadePredict, "blue", "red")
+plot(df$Year, df$Num, pch=19, col = ltAvg)
+lines(df$Year, df$DecadePredict, type = "s")
+```
+
+So, there appear to be more hurricanes in recent decades. Is this because of some meterological or atmospheric change? Or does it have something to do with the way observations have been collected? I'll look into that next.

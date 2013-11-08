@@ -1,15 +1,19 @@
-# Exploratory analysis and munging
-
-filename = "Hurricanes.csv"
-
+Exploratory analysis and munging
+====
+This file will open the hurricane data gathered previously and make some minor changes. First, we'll open up the file and take a look at the contents.
+```{r}
 setwd("~/GitHub/Hurricane/Data/")
+filename = "Basin.NA.ibtracs_wmo.v03r04.csv"
 
-df = read.csv(filename, skip=1)
+df = read.csv(filename, skip = 1)
 
 head(df)
 
 names(df)
+```
 
+Next, we'll remove the first row and change the name of the column "season" to "year".
+```{r}
 df = df[-1, ]
 
 head(df)
@@ -27,7 +31,11 @@ df = rename(df, replace = c("Season" = "Year"))
 names(df)
 
 write.csv(df, file = "Hurricanes.csv")
+print(paste("File was written on:", Sys.time()))
+```
 
+Finally, we'll create a new file which stores the number of hurricanes per year.
+```{r}
 dfYear = unique(df[,c("Year", "Num")])
 
 summary(dfYear)
@@ -35,12 +43,15 @@ sapply(dfYear, typeof)
 
 dfYear = unique(df[,c("Year", "Name", "Num")])
 
-table(dfYear)
-
 dfYear = aggregate(dfYear, by = list(dfYear$Year), length)
 colnames(dfYear)[1] = "Year"
 dfYear = dfYear[,-2]
 
+summary(dfYear)
+
 setwd("~/GitHub/Hurricane/Data")
 
 write.csv(dfYear, "HurricaneByYear.csv")
+
+setwd("~/Github/Hurricane")
+```
